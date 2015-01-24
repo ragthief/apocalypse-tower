@@ -1,0 +1,12 @@
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\Assembly-CSharp.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\UnityEditor.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\UnityEngine.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\UnityEngine.UI.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\Mono.Cecil.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\nunit.framework.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\Unity.DataContract.dll
+D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp.dll
+D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp.pdb
