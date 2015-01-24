@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: bbc4a25429e4c82418b6e4945571f869
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - bldBrush: {instanceID: 0}
+  - bldRoom: {fileID: 100000, guid: feb63ea135b366441bc84f2073745186, type: 2}
+  - bldLight: {fileID: 100002, guid: 6bef0d83dbcfde74186b164fb93a5b94, type: 2}
+  - bldPower: {fileID: 100002, guid: 0248e0044d3bd344880c6c756dd58b81, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
