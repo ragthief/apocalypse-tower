@@ -1,7 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
-Project("{59FCA48C-9CD8-9009-1D7A-2322106C30E7}") = "DerpSlum", "Assembly-CSharp.csproj", "{52C34398-8BE1-BF30-977B-1F9D638A1A3C}"
+Project("{3B295B9E-4172-51FC-7010-C08F722BD469}") = "Apoc Tower", "Assembly-CSharp.csproj", "{9835EC05-398F-25B9-E71E-C5C41AB3612D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,15 +9,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{52C34398-8BE1-BF30-977B-1F9D638A1A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52C34398-8BE1-BF30-977B-1F9D638A1A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52C34398-8BE1-BF30-977B-1F9D638A1A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52C34398-8BE1-BF30-977B-1F9D638A1A3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9835EC05-398F-25B9-E71E-C5C41AB3612D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9835EC05-398F-25B9-E71E-C5C41AB3612D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9835EC05-398F-25B9-E71E-C5C41AB3612D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9835EC05-398F-25B9-E71E-C5C41AB3612D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																				GlobalSection(MonoDevelopProperties) = preSolution
+	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -35,5 +35,4 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
-
 EndGlobal
