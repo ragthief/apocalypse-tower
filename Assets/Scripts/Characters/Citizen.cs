@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -111,7 +112,7 @@ public class Citizen : MonoBehaviour
 
         World.initialiseLayers();
 
-        Tower.addCitizen(this);
+        //Tower.addCitizen(this);
 
         maxWallsHit = getRand(4);
     }

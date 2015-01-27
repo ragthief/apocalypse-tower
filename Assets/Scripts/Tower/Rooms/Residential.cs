@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public abstract class Residential : Room {
 
-    protected List<Citizen> residents = new List<Citizen>();
+    protected List<Human> residents = new List<Human>();
     protected int currentPopulation = 0;
     protected int populationCapacity = 4;
 
     //For adding multiple residents at same time.
-    public virtual void AddResidents(List<Citizen> addedResidents)
+    public virtual void AddResidents(List<Human> addedResidents)
     {
         if (populationCapacity >= addedResidents.Count + residents.Count)
         {
@@ -18,9 +18,9 @@ public abstract class Residential : Room {
         }
     }
 
-    public virtual void RemoveResident(List<Citizen> removedCitizens)
+    public virtual void RemoveResident(List<Human> removedCitizens)
     {
-        foreach (Citizen r in removedCitizens)
+        foreach (Human r in removedCitizens)
         {
             residents.Remove(r);
             currentPopulation--;
@@ -37,7 +37,7 @@ public abstract class Residential : Room {
         return populationCapacity;
     }
 
-    public virtual List<Citizen> ListResidents
+    public virtual List<Human> ListResidents
     {
         get { return residents; }
     }
@@ -45,7 +45,7 @@ public abstract class Residential : Room {
     public override string displayInformation() {
         string displayString = "";
         int numResident = 1;
-        foreach (Citizen resident in residents)
+        foreach (Human resident in residents)
         {
             displayString += "\n" + "Resident #" + numResident + ": " + resident.getName();
             numResident++;

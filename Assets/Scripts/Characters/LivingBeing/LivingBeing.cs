@@ -69,4 +69,7 @@ public class LivingBeing : MonoBehaviour
             Flip();
         }
     }
+    public virtual void OnCollisionExit2D(Collision2D col) {
+
+    }
 }

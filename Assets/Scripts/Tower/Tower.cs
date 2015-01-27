@@ -12,20 +12,18 @@ public class Tower {
     private static List<Room> residentialRooms = new List<Room>();
     private static List<Room> commercialRooms = new List<Room>();
     private static List<Room> utilityRooms = new List<Room>();
-
-    private static List<Citizen> totalPopulation = new List<Citizen>();
+    private static List<Human> totalPopulation = new List<Human>();
 
     private static bool keepAdding = false;
 
-    public static void HouseResident(Citizen newResident)
+    public static void HouseResident(Human newResident)
     {
         keepAdding = true;
         //Finds an empty room for the resident to live.
         foreach (Residential room in residentialRooms)
         {
             if(room.getCurrentPopulation() < room.getPopulationCapacity() && keepAdding) {
-                //Terrible Workaround sorry - Kyle
-                List<Citizen> addedCitizens = new List<Citizen>();
+                List<Human> addedCitizens = new List<Human>();
                 addedCitizens.Add(newResident);
                 room.AddResidents(addedCitizens);
                 keepAdding = false;
@@ -97,7 +95,7 @@ public class Tower {
         return currentPopulation;
     }
 
-    public static void addCitizen(Citizen newResident)
+    public static void addCitizen(Human newResident)
     {
         //Find a residental building to house the spawned citizen in.
         HouseResident(newResident);      
