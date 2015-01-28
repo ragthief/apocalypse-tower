@@ -20,6 +20,10 @@ public class Sentient : LivingBeing {
     public int charisma = 10;
     public int maxStats = 100;
     int numLaddaz = 0;
+    
+    //Ladder targets
+    int targetFloor = 4;
+    int currentFloor = 0;
 
     //Layer ints
     private int groundedLayer = 9;
@@ -95,10 +99,11 @@ public class Sentient : LivingBeing {
                 rigidbody2D.velocity = new Vector2(0, transform.localScale.y * moveSpeed);
                 isAscending = true;
             }
-
+            /*
             else {
                 rigidbody2D.velocity = new Vector2(0, transform.localScale.y * -moveSpeed);
             }
+            */
         }
         //Else move around normally
         else {
@@ -150,8 +155,6 @@ public class Sentient : LivingBeing {
         //If flag specified, draw NPC information
         if (displayNPCInformation) {
             NPCData = GUI.Window(3, NPCData, wndNPCData, "About this NPC");
-            //NPCData.x = this.transform.position.x;
-            //NPCData.y = this.transform.position.y+50;
         }
     }
 
@@ -168,7 +171,12 @@ public class Sentient : LivingBeing {
                          "Endurance: " + endurance + "\n" +
                          "Intelligence: " + intelligence + "\n" +
                          "Charisma: " + charisma + "\n" +
-                         "Layer: " + this.gameObject.layer.ToString());
+                         "Layer: " + this.gameObject.layer.ToString() + "\n" +
+                         "Floor: " + currentFloor + "\n" +
+                         "Target Floor: " + targetFloor + "\n" +
+                         "Ascend Flag: " + ascendFlag + "\n" +
+                         "Descend Flag: " + descendFlag + "\n" +
+                         "Use next ladder: " + useNextLadder);
     }
 
     public virtual void assignStats(int randCeiling) {
@@ -275,7 +283,6 @@ public class Sentient : LivingBeing {
     void FindLadder() {
         Debug.Log("Find ladder");
         this.gameObject.layer = findLadderLayer;
-        useNextLadder = true;
     }
     //Ladder called when you arrive at bottom of transport object and want to move away from it before re-enabling collisions
     void ArriveAtBottom() {
@@ -286,6 +293,20 @@ public class Sentient : LivingBeing {
     void setLadderMoves(int floorNum) {
         //Moves citizen to a specified floor level
 
+    }
+
+    public override void OnTriggerEnter2D(Collider2D trigger) {
+        if (trigger.gameObject.tag == "CheckLadder") {
+            Debug.Log("Check Ladder!");
+            if ((trigger.transform.position.y > this.transform.position.y) && useNextLadder && ascendFlag) {
+                Debug.Log("Ladder is above");
+                FindLadder();
+            }
+            else if ((trigger.transform.position.y < this.transform.position.y) && useNextLadder && descendFlag) {
+                Debug.Log("Ladder is below");
+                FindLadder();
+            }
+        }
     }
 
     public override void OnCollisionEnter2D(Collision2D col) {
@@ -308,29 +329,17 @@ public class Sentient : LivingBeing {
             Flip();
         }
         //Basic Ladder encounter
-        if (col.gameObject.tag == "Ladder" && ladderReactionDelay < 0 && useNextLadder) {
+        if (col.gameObject.tag == "Ladder" && ladderReactionDelay < 0) {
             isLadder = true;
             ladderReactionDelay = -1;
             ladderPosition = col.transform;
-            if (this.transform.position.y < col.transform.position.y) {
-                if (ascendFlag) {
-                    ClimbUpLadder();
-                }
-                else {
-                    SkipLadder();
-                    skipTrigger = true;
-                    //descendFlag = false;
-                }
+            if (ascendFlag) {
+                ClimbUpLadder();
+                Debug.Log("Going up");
             }
-            else if (this.transform.position.y > col.transform.position.y) {
-                if (descendFlag) {
-                    ClimbDownLadder();
-                }
-                else {
-                    SkipLadder();
-                    skipTrigger = true;
-                    //ascendFlag = false;
-                }
+            if (descendFlag) {
+                ClimbDownLadder();
+                Debug.Log("Going down");
             }
         }
 
@@ -346,8 +355,26 @@ public class Sentient : LivingBeing {
                 Flip();
                 //Each time a wall is hit, check count to see if you should ascend or descent.
                 if (numWallsHit > maxWallsHit) {
-                    //If two walls hit, change layer to encounter descent transport objects.
-                    RandomLadder();
+                    //If the citizen is currently below the target floor, ascend
+                    if (currentFloor < targetFloor) {
+                        useNextLadder = true;
+                        ascendFlag = true;
+                        descendFlag = false;
+                        Debug.Log("Mark ascend");
+                    }
+                    //Else if the citizen is above target floor, descend
+                    else if (currentFloor > targetFloor) {
+                        useNextLadder = true;
+                        descendFlag = true;
+                        ascendFlag = false;
+                        Debug.Log("Mark descend");
+                    }
+                    //Else carry on
+                    else {
+                        numWallsHit = 0;
+                        ascendFlag = false;
+                        descendFlag = false;
+                    }
                 }
             }
         }
@@ -366,6 +393,10 @@ public class Sentient : LivingBeing {
                 ladderReactionDelay = 1;
                 isAscending = false;
                 isDescending = false;
+                currentFloor++;
+            }
+            if (isDescending) {
+                currentFloor--;
             }
         }
         if (col.gameObject.tag == "Floor" && isLadder) {
@@ -377,5 +408,10 @@ public class Sentient : LivingBeing {
                 isFloored = false;
             }
         }
+    }
+
+    //Option to set the target floor externally
+    public virtual void setTargetFloor(int floorToTarget) {
+        targetFloor = floorToTarget;
     }
 }

@@ -72,4 +72,7 @@ public class LivingBeing : MonoBehaviour
     public virtual void OnCollisionExit2D(Collision2D col) {
 
     }
+    public virtual void OnTriggerEnter2D(Collider2D trigger) {
+
+    }
 }
