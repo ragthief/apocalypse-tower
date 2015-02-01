@@ -12,31 +12,31 @@ public class Sentient : LivingBeing {
     //Ints
     public int id;
     public int randNum;
-    int numWallsHit = 0;
-    int maxWallsHit;
+    public int numWallsHit = 0;
+    public int maxWallsHit;
     public int dexterity = 10;
     public int endurance = 10;
     public int intelligence = 10;
     public int charisma = 10;
     public int maxStats = 100;
-    int numLaddaz = 0;
+    public int numLaddaz = 0;
     
     //Ladder targets
-    int targetFloor = 4;
-    int currentFloor = 0;
+    public int targetFloor = 4;
+    public int currentFloor = 0;
 
     //Layer ints
-    private int groundedLayer = 9;
-    private int ascendLayer = 14;
-    private int descendLayer = 15;
-    private int platformLayer = 19;
-    private int findLadderLayer = 21;
-    private int landingLayer = 22;
+    protected int groundedLayer = 9;
+    protected int ascendLayer = 14;
+    protected int descendLayer = 15;
+    protected int platformLayer = 19;
+    protected int findLadderLayer = 21;
+    protected int landingLayer = 22;
     
     //Ladder Ints
-    int ladderReactionDelay = -1;
-    int up = 1;
-    int down = 0;
+    public int ladderReactionDelay = -1;
+    public int up = 1;
+    public int down = 0;
 
     //Strings
     public string name;
@@ -222,13 +222,13 @@ public class Sentient : LivingBeing {
         return name;
     }
 
-    void SkipLadder() {
+    public void SkipLadder() {
         isLadder = false;
         numWallsHit = 0;
         walkPlatform();
     }
 
-    void RandomLadder() {
+    public void RandomLadder() {
         int direction = getRand(100);
         numWallsHit = 0;
         if (direction > 50) {
@@ -240,8 +240,9 @@ public class Sentient : LivingBeing {
     }
 
     //Sets flags so that on the next collision with a ladder that's above the citizen, then will climb it in the direction specified.
-    void UseLadder(int direction) {
+    public void UseLadder(int direction) {
         if (direction == 1) {
+			Debug.Log ("Up we go!");
             FindLadder();
             ascendFlag = true;
             descendFlag = false;
@@ -255,42 +256,42 @@ public class Sentient : LivingBeing {
 
     //Layer flag methods
     //Walk on any platform above the ground floor.
-    void walkPlatform() {
+    public void walkPlatform() {
         isGrounded = true;
         isFloored = true;
         this.gameObject.layer = platformLayer;
     }
     //Walk on ground
-    void walkGround() {
+    public void walkGround() {
         Debug.Log("Walk ground");
         isGrounded = true;
         this.gameObject.layer = groundedLayer;
-        UseLadder(up);
+        //UseLadder(up);
     }
     //Called when collision detected by ladder, and the citizen is flagged to ascend the ladder
     //Causes citizen to ignore various object to ascend ladder - layer designations in World.cs
-    void ClimbUpLadder() {
+    public void ClimbUpLadder() {
         Debug.Log("Climb up ladder");
         this.gameObject.layer = ascendLayer;
     }
     //Called when collision detected by ladder, and the citizen is flagged to descend the ladder
     //Causes citizen to ignore various objects to descend ladder - layer designations in World.cs
-    void ClimbDownLadder() {
+    public void ClimbDownLadder() {
         Debug.Log("Climb down ladder");
         this.gameObject.layer = descendLayer;
     }
     //Ladder called whenever you want to find a ladder
-    void FindLadder() {
+    public void FindLadder() {
         Debug.Log("Find ladder");
         this.gameObject.layer = findLadderLayer;
     }
     //Ladder called when you arrive at bottom of transport object and want to move away from it before re-enabling collisions
-    void ArriveAtBottom() {
+    public void ArriveAtBottom() {
         Debug.Log("Arrive Bottom");
         this.gameObject.layer = landingLayer;
     }
 
-    void setLadderMoves(int floorNum) {
+    public void setLadderMoves(int floorNum) {
         //Moves citizen to a specified floor level
 
     }

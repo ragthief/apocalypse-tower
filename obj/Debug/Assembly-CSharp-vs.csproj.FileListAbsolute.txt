@@ -10,3 +10,14 @@ D:\GameDev\Unity Projects\NewPoz\Temp\bin\Debug\ICSharpCode.NRefactory.dll
 D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
 D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp.dll
 D:\GameDev\Unity Projects\NewPoz\obj\Debug\Assembly-CSharp.pdb
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\Assembly-CSharp.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\Assembly-CSharp.pdb
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\UnityEditor.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\UnityEngine.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\Mono.Cecil.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\nunit.framework.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\Unity.DataContract.dll
+G:\Unity Projects\Apoc Tower\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+G:\Unity Projects\Apoc Tower\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+G:\Unity Projects\Apoc Tower\obj\Debug\Assembly-CSharp.dll
+G:\Unity Projects\Apoc Tower\obj\Debug\Assembly-CSharp.pdb
