@@ -45,6 +45,10 @@ public class World {
 		}
 	}
 
+    public static Room GetRoom(int x, int y) {
+        return plots[y][x].GetRoom();
+    }
+
 	public static bool Build(Room room, int x, int y){
 		bool check = CheckBuildingBoundries(room, x, y);
 
@@ -241,6 +245,7 @@ public class World {
 
     // For pathfinding
     public static void ConstructGraph() {
+		pathfindingGraph.ClearConnections();
         for (int i = 0; i < HEIGHT; i++) {
             for (int k = 0; k < WIDTH - 1; k++) {
                 //For all nodes on the ground floor.
@@ -252,8 +257,10 @@ public class World {
                     if (plots[i][k].GetRoom() != null) {
                         //For rooms which have a ladder connecting them the the previous floor.
                         if (plots[i - 1][k].GetRoom().hasLadder) {
-                            pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k, i - 1), 1));
-                            Debug.Log("Ladder connection: (" + k + ", " + i + ") to (" + k + ", " + (i - 1) + ").");
+                            if (Math.Round(plots[i-1][k].GetRoom().ladderObject.transform.position.x, MidpointRounding.AwayFromZero) == k) {
+                                pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k, i - 1), 1));
+                                Debug.Log("Ladder connection: (" + k + ", " + i + ") to (" + k + ", " + (i - 1) + ").");
+                            }
                         }
                         //For rooms which have not been connected yet.
                         if (plots[i][k + 1].GetRoom() != null) {
