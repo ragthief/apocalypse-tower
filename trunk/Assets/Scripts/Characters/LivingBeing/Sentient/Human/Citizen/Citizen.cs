@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public class Citizen : Human {
@@ -81,6 +82,22 @@ public class Citizen : Human {
             if (pathToLocation != null && pathToLocation.Count > 0) {
                 nextInstruction = pathToLocation[0];
                 goingToLocation = true;
+            }
+        }
+    }
+
+    public void GoToNearest(string targetTag) {
+        List<GameObject> targets = new List<GameObject>(GameObject.FindGameObjectsWithTag(targetTag));
+        var targetOrder = targets.OrderBy(o => (o.transform.position - transform.position).sqrMagnitude);
+        goingToLocation = false;
+        foreach (GameObject g in targetOrder) {
+            Vector2 targetPosition = new Vector2((int)Math.Round(g.transform.position.x, MidpointRounding.AwayFromZero), (int)Math.Round(g.transform.position.y, MidpointRounding.AwayFromZero));
+            Vector2 currentPosition = new Vector2((int)Math.Round(transform.position.x, MidpointRounding.AwayFromZero), (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero));
+            pathToLocation = World.FindPath(currentPosition, targetPosition);
+            if (pathToLocation != null && pathToLocation.Count > 0) {
+                nextInstruction = pathToLocation[0];
+                goingToLocation = true;
+                break;
             }
         }
     }
