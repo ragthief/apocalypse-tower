@@ -1,8 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\ABC\Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs">
     <Files>
-      <File FileName="..\ABC\Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs" Line="4" Column="29" />
+      <File FileName="Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs" Line="274" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
