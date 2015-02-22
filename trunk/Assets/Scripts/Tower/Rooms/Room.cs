@@ -53,7 +53,10 @@ public class Room : MonoBehaviour {
         return new string[]
 		{
 			"GeneralStore",
-            "ReinforcedRustyShack"
+            "ReinforcedRustyShack",
+            "LumberjackHut",
+            "MasonHut",
+            "SmelterHut"
 		};
     }
 
