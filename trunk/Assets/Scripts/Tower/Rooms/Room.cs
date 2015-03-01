@@ -36,13 +36,11 @@ public class Room : MonoBehaviour {
     private static int statBoxWidth = 200;
     private static int statBoxHeight = 250;
 
-    public GameObject ladderObject = null;
-    public GameObject descendLadder = null;
+    public GameObject verticalTransportObject = null;
     public GameObject floorObject = null;
     public GameObject ceilingObject = null;
     public float floorOffset = -.5298f;
     public float ceilingOffset = .4700f;
-    public float ladderYOffset = .055132f;
     public Rect RoomData = new Rect(statBoxLeft, statBoxTop, statBoxWidth, statBoxHeight);
     public bool displayRoomInformation;       // Display NPC Information?
     public Rect ladderButton = new Rect(statBoxLeft, 400, statBoxWidth, statBoxHeight);
@@ -124,7 +122,7 @@ public class Room : MonoBehaviour {
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (World.Build(this, (int)transform.position.x, (int)transform.position.y))
+                if (World.Build(this, (int)transform.position.x - (width / 2), (int)transform.position.y - (height / 2)))
                 {
                     Construct();
                 }
@@ -179,11 +177,11 @@ public class Room : MonoBehaviour {
             RoomData = GUI.Window(3, RoomData, wndNPCData, "Room Information");
             if (GUI.Button(ladderButton, "createLadder")) {
                 if (!createLadderFlag) {
-                    createLadder();
+                    createVerticalTransport("Ladder", 0.25f);
                     createLadderFlag = true;
                 }
                 else if (createLadderFlag) {
-                    destroyLadder();
+                    destroyVerticalTransport();
                     createLadderFlag = false;
                 }
             }
@@ -279,15 +277,15 @@ public class Room : MonoBehaviour {
         return roomRight;
     }
 
-    void createLadder() {
-        float xOffset = transform.position.x - .5f;
-        ladderObject = Instantiate(Resources.Load(transPath + "Ladder"), new Vector3(xOffset, transform.position.y + ladderYOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
+    void createVerticalTransport(string type, float xOffset) {
+        xOffset = transform.position.x - xOffset;
+        verticalTransportObject = Instantiate(Resources.Load(transPath + "Ladder"), new Vector3(xOffset, transform.position.y, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
         hasLadder = true;
         World.ConstructGraph();
     }
 
-    void destroyLadder() {
-        Destroy(ladderObject);
+    void destroyVerticalTransport() {
+        Destroy(verticalTransportObject);
         hasLadder = false;
         World.ConstructGraph();
     }

@@ -1,12 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs">
     <Files>
-      <File FileName="Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs" Line="274" Column="1" />
+      <File FileName="Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs" Line="91" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="G:\Unity Projects\Apoc Tower\Assets\Scripts\Characters\LivingBeing\Sentient\Human\Citizen\Citizen.cs" line="91" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

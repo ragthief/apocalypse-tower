@@ -32,6 +32,8 @@ public class Sentient : LivingBeing {
     protected int platformLayer = 19;
     protected int findLadderLayer = 21;
     protected int landingLayer = 22;
+    protected const int transportLayer = 11;
+	protected const int citizenLayer = 10;
     
     //Ladder Ints
     public int ladderReactionDelay = -1;

@@ -5,7 +5,7 @@ public class OverPopulationEvent : MonoBehaviour {
 
 	// Each event should have at least an event object of a delegate, an add method procedure, remove method procedure
 	private event OverPopulationDel overPopulationEvent;
-	
+
 	public void AddMethod(OverPopulationDel method) {
 		overPopulationEvent += method;
 	}
