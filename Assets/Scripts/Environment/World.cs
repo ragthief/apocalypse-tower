@@ -257,7 +257,7 @@ public class World {
                     if (plots[i][k].GetRoom() != null) {
                         //For rooms which have a ladder connecting them the the previous floor.
                         if (plots[i - 1][k].GetRoom().hasLadder) {
-                            if (Math.Round(plots[i-1][k].GetRoom().ladderObject.transform.position.x, MidpointRounding.AwayFromZero) == k) {
+                            if ((int) plots[i-1][k].GetRoom().verticalTransportObject.transform.position.x == k) {
                                 pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k, i - 1), 1));
                                 Debug.Log("Ladder connection: (" + k + ", " + i + ") to (" + k + ", " + (i - 1) + ").");
                             }
@@ -359,7 +359,7 @@ public class World {
         //private int findLadder = 21;
 
         //Grounded Layer Settings
-        Physics2D.IgnoreLayerCollision(groundedLayer, groundedLayer, true);
+        /*Physics2D.IgnoreLayerCollision(groundedLayer, groundedLayer, true);
         Physics2D.IgnoreLayerCollision(8, groundedLayer, true);
         Physics2D.IgnoreLayerCollision(groundedLayer, 10, true);
         Physics2D.IgnoreLayerCollision(groundedLayer, 11, true);
@@ -447,6 +447,6 @@ public class World {
         Physics2D.IgnoreLayerCollision(findLadderLayer, 11, true);
         Physics2D.IgnoreLayerCollision(findLadderLayer, groundedLayer, true);
         Physics2D.IgnoreLayerCollision(findLadderLayer, ladderLayer, false);
-        Physics2D.IgnoreLayerCollision(findLadderLayer, 11, false);
+        Physics2D.IgnoreLayerCollision(findLadderLayer, 11, false);*/
     }
 }
