@@ -51,10 +51,8 @@
      <Compile Include="Assets\Default.cs" />
      <Compile Include="Assets\GeneralStore.cs" />
      <Compile Include="Assets\Indicator.cs" />
-     <Compile Include="Assets\LeftBuildingEdge.cs" />
      <Compile Include="Assets\PowerSource.cs" />
      <Compile Include="Assets\ReinforcedRustyShack.cs" />
-     <Compile Include="Assets\RightBuildingEdge.cs" />
      <Compile Include="Assets\Scripts\Characters\AI\AIController.cs" />
      <Compile Include="Assets\Scripts\Characters\AI\Connection.cs" />
      <Compile Include="Assets\Scripts\Characters\AI\Goal.cs" />

@@ -12,16 +12,6 @@ public class World {
 
     private static Graph pathfindingGraph;
 
-    //Layer ints
-    private static int groundedLayer = 9;
-    private static int ascendLayer = 14;
-    private static int descendLayer = 15;
-    private static int platformLayer = 19;
-    private static int findLadderLayer = 21;
-    private static int landingLayer = 22;
-    private static int ladderLayer = 12;
-
-
 	public static void NewWorld(int width, int height){
 
 		WIDTH = width;
@@ -58,6 +48,7 @@ public class World {
 			for(int i = y; i > y - room.Height; i--){
 				for(int k = x; k < x + room.Width; k++){
 					plots[i][k].BuildRoom(room);
+                    Debug.Log("Building at    " + k + " " + i);
 				}
 			}
 		}

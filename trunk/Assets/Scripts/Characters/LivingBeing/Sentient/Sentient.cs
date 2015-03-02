@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+using System;
+using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Sentient : LivingBeing {
     //Static variables
@@ -19,26 +22,9 @@ public class Sentient : LivingBeing {
     public int intelligence = 10;
     public int charisma = 10;
     public int maxStats = 100;
-    public int numLaddaz = 0;
     
-    //Ladder targets
-    public int targetFloor = 4;
-    public int currentFloor = 0;
-
-    //Layer ints
-    protected int groundedLayer = 9;
-    protected int ascendLayer = 14;
-    protected int descendLayer = 15;
-    protected int platformLayer = 19;
-    protected int findLadderLayer = 21;
-    protected int landingLayer = 22;
-    protected const int transportLayer = 11;
-	protected const int citizenLayer = 10;
-    
-    //Ladder Ints
-    public int ladderReactionDelay = -1;
-    public int up = 1;
-    public int down = 0;
+    public const int up = 1;
+    public const int down = 0;
 
     //Strings
     public string name;
@@ -48,16 +34,21 @@ public class Sentient : LivingBeing {
     private bool isMale = false;
     private bool oldIndicator = false;
     public bool displayNPCInformation;
-    
-    //Ladder bools
-    public bool isLadder = false;
-    public bool isFloored = false;
-    public bool descendFlag = false;
-    public bool ascendFlag = true;
-    public bool useNextLadder = true;
-    public bool isDescending = false;
-    public bool isAscending = false;
-    public bool skipTrigger = false;
+
+    private Vector2 velocityOnPath;
+    private List<Vector2> pathToLocation = new List<Vector2>();
+    private Vector2 nextInstruction;
+    private bool newInstruction;
+    private bool goingToLocation;
+    private float verticalMoveSpeed;
+    private bool ascendFlag;
+    private bool descendFlag;
+    private bool isAscending;
+    private bool isDescending;
+    private bool useNextLadder;
+    private bool onLadder;
+    private bool onFloor;
+    private float roamDirection;
 
     //Objects
     public GameObject citizenIndicator;
@@ -68,50 +59,79 @@ public class Sentient : LivingBeing {
     // Use this for initialization
     public override void Start() {
         base.Start();
-        assignStats(maxStats);
-        World.initialiseLayers();
-        //Currently the citizen bouces off of walls this number of times before going to a new floor.
-        maxWallsHit = getRand(4);
+        assignStats(4);
+        verticalMoveSpeed = 1;
+        roamDirection = 1;
     }
 
-    // Update is called once per frame
-    public override void Update() {
-        //Use ladder reaction delay to avoid getting caught by ladder after landing
-        if (ladderReactionDelay > 0) {
-            ladderReactionDelay++;
-            if (ladderReactionDelay > 10) {
-                ladderReactionDelay = -1;
-            }
-        }
-        //Ladder events triggered by 'isLadder' flag
-        if (isLadder) {
-            //If descending event flagged when ladder encountered
-            if (descendFlag) {
-                //If halfway down ladder, switch the layer to prepare for landing
-                if (this.transform.position.y < ladderPosition.transform.position.y && isDescending) {
-                    ArriveAtBottom();
+    public override void FixedUpdate() {
+        base.FixedUpdate();
+        if (goingToLocation) {
+            // Decide if the next instruction needs to be read from the path given to the human.
+            if (!useNextLadder && nextInstruction.x == (int)transform.position.x && nextInstruction.y == (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) { // Update nextInstruction.
+                pathToLocation.RemoveAt(0);
+                if (pathToLocation.Count > 1) {
+                    if (pathToLocation[1].y > (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                        UseLadder(up);
+                        pathToLocation.RemoveAt(0);
+                    } else if (pathToLocation[1].y < (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                        UseLadder(down);
+                        pathToLocation.RemoveAt(0);
+                    }
+                    nextInstruction = pathToLocation[0];
+                    newInstruction = true;
+                } else if (pathToLocation.Count > 0) {
+                    nextInstruction = pathToLocation[0];
+                    newInstruction = true;
+                } else {
+                    goingToLocation = false;
                 }
-                //Move down the ladder
-                rigidbody2D.velocity = new Vector2(0, transform.localScale.y * -moveSpeed);
-                //Used to filter when landingLayer is triggered, in case ladders are doubled up
+            }
+
+            //Horizontal movement whilst on a path.
+            if (!onLadder) {
+                if (newInstruction) {
+                    if (!useNextLadder && nextInstruction.x > (int)transform.position.x) {
+                        velocityOnPath = Vector2.right * moveSpeed;
+                    } else if (!useNextLadder && nextInstruction.x < (int)transform.position.x) {
+                        velocityOnPath = -Vector2.right * moveSpeed;
+                    }
+                    newInstruction = false;
+                }
+                rigidbody2D.velocity = velocityOnPath;
+            }
+            //Horizontal movement whilst roaming.
+        } else if (onFloor) {
+            rigidbody2D.velocity = Vector2.right * roamDirection;
+        }
+
+        //Vertical movement.
+        if (onLadder) {
+            if (ascendFlag) {
+                rigidbody2D.velocity = Vector2.up * verticalMoveSpeed;
+                isAscending = true;
+            } else if (descendFlag) {
+                rigidbody2D.velocity = -Vector2.up * verticalMoveSpeed;
                 isDescending = true;
             }
-            //Else if ascend flag
-            else if (ascendFlag) {
-                rigidbody2D.velocity = new Vector2(0, transform.localScale.y * moveSpeed);
-                isAscending = true;
-            }
-            /*
-            else {
-                rigidbody2D.velocity = new Vector2(0, transform.localScale.y * -moveSpeed);
-            }
-            */
         }
-        //Else move around normally
-        else {
-            //Set the character's velocity to moveSpeed in the x direction.
-            rigidbody2D.velocity = new Vector2(moveSpeed * direction, 0);
+    }
+
+    public void StartPath() {
+        newInstruction = false;
+        if (pathToLocation[0].y > Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+            UseLadder(up);
+            pathToLocation.RemoveAt(0);
+            velocityOnPath = new Vector2(World.GetRoom((int)transform.position.x, (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)).verticalTransportObject.transform.position.x - transform.position.x, 0).normalized * moveSpeed;
+        } else if (pathToLocation[0].y < Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+            UseLadder(down);
+            pathToLocation.RemoveAt(0);
+            velocityOnPath = new Vector2(World.GetRoom((int)transform.position.x, (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero) - 1).verticalTransportObject.transform.position.x - transform.position.x, 0).normalized * moveSpeed;
+        } else {
+            newInstruction = true;
         }
+        nextInstruction = pathToLocation[0];
+        goingToLocation = true;
     }
 
     public virtual void OnMouseDown() {
@@ -158,6 +178,31 @@ public class Sentient : LivingBeing {
         if (displayNPCInformation) {
             NPCData = GUI.Window(3, NPCData, wndNPCData, "About this NPC");
         }
+
+        if (Input.GetMouseButtonDown(2)) {
+            goingToLocation = false;
+            Vector2 currentLocation = new Vector2((int)transform.position.x, (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero));
+            Vector2 endLocation = new Vector2((int)Camera.main.ScreenToWorldPoint(Input.mousePosition).x, (int)Math.Round(Camera.main.ScreenToWorldPoint(Input.mousePosition).y, MidpointRounding.AwayFromZero));
+            pathToLocation = World.FindPath(currentLocation, endLocation);
+            if (pathToLocation != null && pathToLocation.Count > 0) {
+                StartPath();
+            }
+        }
+    }
+
+    public void GoToNearest(string targetTag) {
+        List<GameObject> targets = new List<GameObject>(GameObject.FindGameObjectsWithTag(targetTag));
+        var targetOrder = targets.OrderBy(o => (o.transform.position - transform.position).sqrMagnitude);
+        goingToLocation = false;
+        foreach (GameObject g in targetOrder) {
+            Vector2 targetPosition = new Vector2((int)g.transform.position.x, (int)Math.Round(g.transform.position.y, MidpointRounding.AwayFromZero));
+            Vector2 currentPosition = new Vector2((int)transform.position.x, (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero));
+            pathToLocation = World.FindPath(currentPosition, targetPosition);
+            if (pathToLocation != null && pathToLocation.Count > 0) {
+                StartPath();
+                break;
+            }
+        }
     }
 
     //Information contained inside of NPC data window
@@ -174,8 +219,6 @@ public class Sentient : LivingBeing {
                          "Intelligence: " + intelligence + "\n" +
                          "Charisma: " + charisma + "\n" +
                          "Layer: " + this.gameObject.layer.ToString() + "\n" +
-                         "Floor: " + currentFloor + "\n" +
-                         "Target Floor: " + targetFloor + "\n" +
                          "Ascend Flag: " + ascendFlag + "\n" +
                          "Descend Flag: " + descendFlag + "\n" +
                          "Use next ladder: " + useNextLadder);
@@ -188,7 +231,7 @@ public class Sentient : LivingBeing {
         findID++;
 
         //Decide randomly if citizen is male or female
-        randNum = Random.Range(0, 2);
+        randNum = UnityEngine.Random.Range(0, 2);
         if (randNum > 0) {
 
             isMale = true;
@@ -202,219 +245,83 @@ public class Sentient : LivingBeing {
         }
         //Possible better way is to assign each stat a random number 1 - 4 to randomly determine the order they will be randomly allocated.
         //Allocate character stats having a max stat threshold represented by 'maxStats', and decrementing the random range.
-        randNum = Random.Range(0, randCeiling);
+        randNum = UnityEngine.Random.Range(0, randCeiling);
         dexterity += randNum;
         maxStats -= randNum;
-        randNum = Random.Range(0, randCeiling);
+        randNum = UnityEngine.Random.Range(0, randCeiling);
         endurance += randNum;
         maxStats -= randNum;
-        randNum = Random.Range(0, randCeiling);
+        randNum = UnityEngine.Random.Range(0, randCeiling);
         intelligence += randNum;
         randCeiling -= randNum;
         //Overall remainder assigned to charisma.
         charisma += randCeiling;
     }
 
-    public virtual int getRand(int range) {
-        int myRand = Random.Range(range, 0);
-        return myRand;
-    }
-
     public virtual string getName() {
         return name;
     }
 
-    public void SkipLadder() {
-        isLadder = false;
-        numWallsHit = 0;
-        walkPlatform();
-    }
-
-    public void RandomLadder() {
-        int direction = getRand(100);
-        numWallsHit = 0;
-        if (direction > 50) {
-            UseLadder(up);
-        }
-        else {
-            UseLadder(down);
-        }
-    }
-
-    //Sets flags so that on the next collision with a ladder that's above the citizen, then will climb it in the direction specified.
-    public void UseLadder(int direction) {
+    protected void UseLadder(int direction) {
+        useNextLadder = true;
         if (direction == 1) {
-			Debug.Log ("Up we go!");
-            FindLadder();
             ascendFlag = true;
             descendFlag = false;
-        }
-        else {
-            FindLadder();
+        } else {
             descendFlag = true;
             ascendFlag = false;
         }
+        gameObject.layer = Tower.TransportLayer;
     }
 
-    //Layer flag methods
-    //Walk on any platform above the ground floor.
-    public void walkPlatform() {
-        isGrounded = true;
-        isFloored = true;
-        this.gameObject.layer = platformLayer;
-    }
-    //Walk on ground
-    public void walkGround() {
-        Debug.Log("Walk ground");
-        isGrounded = true;
-        this.gameObject.layer = groundedLayer;
-        //UseLadder(up);
-    }
-    //Called when collision detected by ladder, and the citizen is flagged to ascend the ladder
-    //Causes citizen to ignore various object to ascend ladder - layer designations in World.cs
-    public void ClimbUpLadder() {
-        Debug.Log("Climb up ladder");
-        this.gameObject.layer = ascendLayer;
-    }
-    //Called when collision detected by ladder, and the citizen is flagged to descend the ladder
-    //Causes citizen to ignore various objects to descend ladder - layer designations in World.cs
-    public void ClimbDownLadder() {
-        Debug.Log("Climb down ladder");
-        this.gameObject.layer = descendLayer;
-    }
-    //Ladder called whenever you want to find a ladder
-    public void FindLadder() {
-        Debug.Log("Find ladder");
-        this.gameObject.layer = findLadderLayer;
-    }
-    //Ladder called when you arrive at bottom of transport object and want to move away from it before re-enabling collisions
-    public void ArriveAtBottom() {
-        Debug.Log("Arrive Bottom");
-        this.gameObject.layer = landingLayer;
-    }
-
-    public void setLadderMoves(int floorNum) {
-        //Moves citizen to a specified floor level
-
+    private void StopVerticalTransport() {
+        isAscending = false;
+        isDescending = false;
+        ascendFlag = false;
+        descendFlag = false;
+        onLadder = false;
+        useNextLadder = false;
+        gameObject.layer = Tower.CitizenLayer;
+        if (goingToLocation && pathToLocation.Count > 0) {
+            newInstruction = true;
+        }
     }
 
     public override void OnTriggerEnter2D(Collider2D trigger) {
-        if (trigger.gameObject.tag == "CheckLadder") {
-            Debug.Log("Check Ladder!");
-            if ((trigger.transform.position.y > this.transform.position.y) && useNextLadder && ascendFlag) {
-                Debug.Log("Ladder is above");
-                FindLadder();
-            }
-            else if ((trigger.transform.position.y < this.transform.position.y) && useNextLadder && descendFlag) {
-                Debug.Log("Ladder is below");
-                FindLadder();
-            }
+        if (isDescending && trigger.tag == "BottomTransportCheck") {
+            StopVerticalTransport();
         }
     }
 
     public override void OnCollisionEnter2D(Collision2D col) {
-        //Handles case whenever citizen is landing I'm pretty sure - The originator
-        if ((col.gameObject.tag == "Floor" || col.gameObject.tag == "Ground") && isLadder) {
-            isGrounded = true;
-            isFloored = true;
-            if (isDescending == true) {
-                isLadder = false;
-                isDescending = false;
-            }
-
-            if (col.gameObject.tag == "Floor") {
-                walkGround();
-            }
-            else {
-                walkGround();
-            }
-            ladderReactionDelay = 1;
-            Flip();
-        }
-        //Basic Ladder encounter
-        if (col.gameObject.tag == "Ladder" && ladderReactionDelay < 0) {
-            isLadder = true;
-            ladderReactionDelay = -1;
-            ladderPosition = col.transform;
-            if (ascendFlag) {
-                ClimbUpLadder();
-                Debug.Log("Going up");
-            }
-            if (descendFlag) {
-                ClimbDownLadder();
-                Debug.Log("Going down");
-            }
+        base.OnCollisionEnter2D(col);
+        if (col.gameObject.tag == "Human") {
+            Physics2D.IgnoreCollision(collider2D, col.collider);
         }
 
-        if (col.gameObject.tag == "Ground") {
-            walkGround();
+        if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Floor" || col.gameObject.tag == "Ceiling") {
+            onFloor = true;
         }
-        if (col.gameObject.tag == "EdgeOfMap") {
-            Flip();
-        }
-        if (col.gameObject.tag == "LeftBuildingEdge" || col.gameObject.tag == "RightBuildingEdge") {
-            if (isFloored) {
-                numWallsHit++;
-                Flip();
-                //Each time a wall is hit, check count to see if you should ascend or descent.
-                if (numWallsHit > maxWallsHit) {
-                    //If the citizen is currently below the target floor, ascend
-                    if (currentFloor < targetFloor) {
-                        useNextLadder = true;
-                        ascendFlag = true;
-                        descendFlag = false;
-                        Debug.Log("Mark ascend");
-                    }
-                    //Else if the citizen is above target floor, descend
-                    else if (currentFloor > targetFloor) {
-                        useNextLadder = true;
-                        descendFlag = true;
-                        ascendFlag = false;
-                        Debug.Log("Mark descend");
-                    }
-                    //Else carry on
-                    else {
-                        numWallsHit = 0;
-                        ascendFlag = false;
-                        descendFlag = false;
-                    }
-                }
-            }
-        }
-    }
-    public override void OnCollisionExit2D(Collision2D col) {
-        if (col.gameObject.tag == "Ground" && isLadder) {
-            //Change into transport citizen
-            ClimbUpLadder();
-        }
+
         if (col.gameObject.tag == "Ladder") {
-            if (isAscending) {
-                numLaddaz++;
-                isLadder = false;
-                //Change back to regular citizen
-                walkPlatform();
-                ladderReactionDelay = 1;
-                isAscending = false;
-                isDescending = false;
-                currentFloor++;
-            }
-            if (isDescending) {
-                currentFloor--;
+            onLadder = true;
+            if (useNextLadder) {
+                onFloor = false;
+                gameObject.layer = Tower.TransportLayer;
+            } else {
+                onFloor = true;
+                gameObject.layer = Tower.CitizenLayer;
             }
         }
-        if (col.gameObject.tag == "Floor" && isLadder) {
-            if (skipTrigger) {
-                //FindLadder();
-                skipTrigger = false;
-            }
-            if (isLadder) {
-                isFloored = false;
-            }
+
+        if (col.gameObject.tag == "EdgeOfMap" || col.gameObject.tag == "LeftBuildingEdge" || col.gameObject.tag == "RightBuildingEdge") {
+            roamDirection *= -1;
         }
     }
 
-    //Option to set the target floor externally
-    public virtual void setTargetFloor(int floorToTarget) {
-        targetFloor = floorToTarget;
+    public override void OnCollisionExit2D(Collision2D col) {
+        if (col.gameObject.tag == "Ladder") {
+            StopVerticalTransport();
+        }
     }
 }

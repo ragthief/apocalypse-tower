@@ -9,6 +9,11 @@ public class Tower {
 	static bool isOverPopulated = false;
     static bool canAddCitizen = false;
 
+    public const int RoomLayer = 8;
+    public const int PlacedRoomLayer = 9;
+    public const int CitizenLayer = 10;
+    public const int TransportLayer = 11;
+
     private static List<Room> residentialRooms = new List<Room>();
     private static List<Room> commercialRooms = new List<Room>();
     private static List<Room> utilityRooms = new List<Room>();
@@ -33,7 +38,6 @@ public class Tower {
 
     public static void AddRoom(Room room)
     {
-        room.gameObject.layer = 10;
         if (room is Residential)
             residentialRooms.Add(room);
         else if (room is Commercial)

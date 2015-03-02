@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -122,7 +123,7 @@ public class Room : MonoBehaviour {
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (World.Build(this, (int)transform.position.x - (width / 2), (int)transform.position.y - (height / 2)))
+                if (World.Build(this, (int)transform.position.x - (width / 2), (int) Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero)))
                 {
                     Construct();
                 }
@@ -142,7 +143,7 @@ public class Room : MonoBehaviour {
         }
         else
         {
-            if (World.CheckLeft(this, (int)transform.position.x, (int)transform.position.y))
+            if (World.GetRoom((int) (transform.position.x - (width/2) - 1), (int) Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero)) != null)
             {
                 roomLeft = true;
                 Destroy(leftBuildingEdge);
@@ -151,7 +152,7 @@ public class Room : MonoBehaviour {
             {
                 roomLeft = false;
             }
-            if (World.CheckRight(this, (int)transform.position.x, (int)transform.position.y))
+            if (World.GetRoom((int) (transform.position.x + (width / 2)), (int)Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero)) != null)
             {
                 roomRight = true;
                 Destroy(rightBuildingEdge);
@@ -194,8 +195,8 @@ public class Room : MonoBehaviour {
             {
                 badLocations = new List<Vector2>();
                 //this is used to display red squares over the building to show it can't be built
-                int y = (int)transform.position.y;
-                int x = (int)transform.position.x;
+                int y = (int)transform.position.y - (height / 2);
+                int x = (int)transform.position.x - (width / 2);
                 for (int i = y; i > y - Height; i--)
                 {
                     for (int k = x; k < x + Width; k++)

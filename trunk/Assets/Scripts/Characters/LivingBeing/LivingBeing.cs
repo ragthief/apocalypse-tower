@@ -28,6 +28,10 @@ public class LivingBeing : MonoBehaviour
         handleMovement();
     }
 
+    public virtual void FixedUpdate() {
+
+    }
+
     public virtual void CheckDeath()
     {
         if (health <= 0)
