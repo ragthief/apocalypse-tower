@@ -321,7 +321,13 @@ public class Sentient : LivingBeing {
 
     public override void OnCollisionExit2D(Collision2D col) {
         if (col.gameObject.tag == "Ladder") {
-            StopVerticalTransport();
+            if (goingToLocation) {
+                if ((int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero) == nextInstruction.y) {
+                    StopVerticalTransport();
+                }
+            } else {
+                StopVerticalTransport();
+            }
         }
     }
 }

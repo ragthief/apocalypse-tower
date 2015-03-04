@@ -123,7 +123,7 @@ public class Room : MonoBehaviour {
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (World.Build(this, (int)transform.position.x - (width / 2), (int) Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero)))
+                if (World.Build(this, (int) (transform.position.x - (width / 2)), (int) Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero)))
                 {
                     Construct();
                 }
@@ -178,7 +178,7 @@ public class Room : MonoBehaviour {
             RoomData = GUI.Window(3, RoomData, wndNPCData, "Room Information");
             if (GUI.Button(ladderButton, "createLadder")) {
                 if (!createLadderFlag) {
-                    createVerticalTransport("Ladder", 0.25f);
+                    createVerticalTransport("Ladder", 0.35f);
                     createLadderFlag = true;
                 }
                 else if (createLadderFlag) {
@@ -195,8 +195,8 @@ public class Room : MonoBehaviour {
             {
                 badLocations = new List<Vector2>();
                 //this is used to display red squares over the building to show it can't be built
-                int y = (int)transform.position.y - (height / 2);
-                int x = (int)transform.position.x - (width / 2);
+                int y = (int) Math.Round(transform.position.y - (height / 2), MidpointRounding.AwayFromZero);
+                int x = (int) (transform.position.x - (width / 2));
                 for (int i = y; i > y - Height; i--)
                 {
                     for (int k = x; k < x + Width; k++)
@@ -218,7 +218,7 @@ public class Room : MonoBehaviour {
                 //keep the red squares in line with the camera position
                 float heightDiff = (Camera.main.transform.position.y - 2) * 2;
 
-                Vector3 screenPos = Camera.main.WorldToScreenPoint(new Vector3(loc.x - 1, (loc.y - heightDiff - 3.5f) * -1, 0));
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(new Vector3(loc.x, (loc.y - heightDiff - 3.5f) * -1, 0));
 
                 GUI.BeginGroup(new Rect(screenPos.x, screenPos.y, scale, scale));
                 GUI.DrawTexture(new Rect(0, 0, scale, scale), badPlacement);
