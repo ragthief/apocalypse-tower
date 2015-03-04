@@ -48,7 +48,6 @@ public class World {
 			for(int i = y; i > y - room.Height; i--){
 				for(int k = x; k < x + room.Width; k++){
 					plots[i][k].BuildRoom(room);
-                    Debug.Log("Building at    " + k + " " + i);
 				}
 			}
 		}
