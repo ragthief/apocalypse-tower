@@ -118,6 +118,7 @@ public class Sentient : LivingBeing {
     }
 
     public void UpdateNextInstruction() {
+
         if (pathToLocation.Count > 2) { //Look two steps ahead to anticipate ladders.
             pathToLocation.RemoveAt(0);
             if (pathToLocation[1].y > (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
@@ -140,7 +141,7 @@ public class Sentient : LivingBeing {
             newInstruction = true;
         } else { //We have arrived!
             goingToLocation = false;
-        }
+        }    
     }
 
     public virtual void OnMouseDown() {
