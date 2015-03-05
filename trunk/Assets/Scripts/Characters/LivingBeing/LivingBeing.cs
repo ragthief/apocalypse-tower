@@ -1,23 +1,28 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class LivingBeing : MonoBehaviour
 {
-    //Bools
-    public bool isGrounded;
+    //Constants
+    public const int right = 1;
+    public const int left = -1;
 
     //Floats
-    public float moveSpeed = 1f;
+    protected float moveSpeed = 1f;
+    protected float verticalMoveSpeed = 1f;
 
     //Ints
-    public int health = 100;
-    public int direction = 1;
+    protected int health = 100;
+    protected int roamDirection;
+
     //protected Animator anim;
 
 
     // Use this for initialization
     public virtual void Start()
     {
+        roamDirection = right;
         //anim = GetComponent<Animator>();
     }
 
@@ -25,11 +30,10 @@ public class LivingBeing : MonoBehaviour
     public virtual void Update()
     {
         CheckDeath();
-        handleMovement();
     }
 
     public virtual void FixedUpdate() {
-
+        
     }
 
     public virtual void CheckDeath()
@@ -46,12 +50,8 @@ public class LivingBeing : MonoBehaviour
         health -= damageAmount;
     }
 
-    public virtual void handleMovement() {
-        Debug.Log("handle movement");
-        if (isGrounded) {
-            Debug.Log("Testing movement");
-            rigidbody2D.velocity = new Vector2(moveSpeed * direction, 0);
-        }
+    public virtual void HandleMovement() {
+        rigidbody2D.velocity = Vector2.right * roamDirection;
     }
 
     //Turn the being around
@@ -61,15 +61,24 @@ public class LivingBeing : MonoBehaviour
         Vector3 citizenScale = transform.localScale;
         citizenScale.x *= -1;
         transform.localScale = citizenScale;
-        direction *= -1;
+        roamDirection *= -1;
+    }
+
+    //The direction you want the being to face in is specified.
+    public virtual void FlipTo(int direction) {
+        Vector3 citizenScale = transform.localScale;
+        if (direction == right) {
+            citizenScale.x = Mathf.Abs(citizenScale.x);
+            roamDirection = right;
+        } else {
+            citizenScale.x = Mathf.Abs(citizenScale.x) * -1;
+            roamDirection = left;
+        }
+        transform.localScale = citizenScale;
     }
 
     public virtual void OnCollisionEnter2D(Collision2D col) {
-        if (col.gameObject.tag == "Ground") {
-            Debug.Log("Grounded");
-            isGrounded = true;
-        }
-        if (col.gameObject.tag == "EdgeOfMap") {
+        if (col.gameObject.tag == "EdgeOfMap" || col.gameObject.tag == "LeftBuildingEdge" || col.gameObject.tag == "RightBuildingEdge") {
             Flip();
         }
     }
