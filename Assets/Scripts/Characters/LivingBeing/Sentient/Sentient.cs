@@ -15,8 +15,6 @@ public class Sentient : LivingBeing {
     //Ints
     public int id;
     public int randNum;
-    public int numWallsHit = 0;
-    public int maxWallsHit;
     public int dexterity = 10;
     public int endurance = 10;
     public int intelligence = 10;
@@ -35,12 +33,14 @@ public class Sentient : LivingBeing {
     private bool oldIndicator = false;
     public bool displayNPCInformation;
 
+    //Movement variables
     private Vector2 velocityOnPath;
     private List<Vector2> pathToLocation = new List<Vector2>();
     private Vector2 nextInstruction;
+    protected float roamRandomTime;
+    protected float roamTimeRemaining;
     private bool newInstruction;
     private bool goingToLocation;
-    private float verticalMoveSpeed;
     private bool ascendFlag;
     private bool descendFlag;
     private bool isAscending;
@@ -48,7 +48,6 @@ public class Sentient : LivingBeing {
     private bool useNextLadder;
     private bool onLadder;
     private bool onFloor;
-    private float roamDirection;
 
     //Objects
     public GameObject citizenIndicator;
@@ -60,52 +59,36 @@ public class Sentient : LivingBeing {
     public override void Start() {
         base.Start();
         assignStats(4);
-        verticalMoveSpeed = 1;
-        roamDirection = 1;
     }
 
     public override void FixedUpdate() {
         base.FixedUpdate();
-        if (goingToLocation) {
-            // Decide if the next instruction needs to be read from the path given to the human.
-            if (!useNextLadder && nextInstruction.x == (int)transform.position.x && nextInstruction.y == (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) { // Update nextInstruction.
-                pathToLocation.RemoveAt(0);
-                if (pathToLocation.Count > 1) {
-                    if (pathToLocation[1].y > (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
-                        UseLadder(up);
-                        pathToLocation.RemoveAt(0);
-                    } else if (pathToLocation[1].y < (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
-                        UseLadder(down);
-                        pathToLocation.RemoveAt(0);
-                    }
-                    nextInstruction = pathToLocation[0];
-                    newInstruction = true;
-                } else if (pathToLocation.Count > 0) {
-                    nextInstruction = pathToLocation[0];
-                    newInstruction = true;
-                } else {
-                    goingToLocation = false;
-                }
+        if (goingToLocation) { //If we have been given a path.
+            // Update nextInstruction.
+            if (!useNextLadder && nextInstruction.x == (int)transform.position.x && nextInstruction.y == (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                UpdateNextInstruction();
             }
-
-            //Horizontal movement whilst on a path.
+            //Horizontal movement whilst on the path given.
             if (!onLadder) {
-                if (newInstruction) {
+                if (newInstruction) { //If the nextInstruction has changed then figure out the new velocity the character should take.
                     if (!useNextLadder && nextInstruction.x > (int)transform.position.x) {
                         velocityOnPath = Vector2.right * moveSpeed;
+                        FlipTo(right);
                     } else if (!useNextLadder && nextInstruction.x < (int)transform.position.x) {
                         velocityOnPath = -Vector2.right * moveSpeed;
+                        FlipTo(left);
                     }
                     newInstruction = false;
                 }
                 rigidbody2D.velocity = velocityOnPath;
             }
-            //Horizontal movement whilst roaming.
+
+        //Horizontal movement whilst roaming.
         } else if (onFloor) {
-            rigidbody2D.velocity = Vector2.right * roamDirection;
+            HandleMovement();
         }
 
-        //Vertical movement.
+        //Vertical movement for both roaming and on a path.
         if (onLadder) {
             if (ascendFlag) {
                 rigidbody2D.velocity = Vector2.up * verticalMoveSpeed;
@@ -118,7 +101,6 @@ public class Sentient : LivingBeing {
     }
 
     public void StartPath() {
-        newInstruction = false;
         if (pathToLocation[0].y > Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
             UseLadder(up);
             pathToLocation.RemoveAt(0);
@@ -127,11 +109,38 @@ public class Sentient : LivingBeing {
             UseLadder(down);
             pathToLocation.RemoveAt(0);
             velocityOnPath = new Vector2(World.GetRoom((int)transform.position.x, (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero) - 1).verticalTransportObject.transform.position.x - transform.position.x, 0).normalized * moveSpeed;
-        } else {
-            newInstruction = true;
         }
-        nextInstruction = pathToLocation[0];
+        newInstruction = true;
         goingToLocation = true;
+        if (pathToLocation.Count > 0) {
+            nextInstruction = pathToLocation[0];
+        }
+    }
+
+    public void UpdateNextInstruction() {
+        if (pathToLocation.Count > 2) { //Look two steps ahead to anticipate ladders.
+            pathToLocation.RemoveAt(0);
+            if (pathToLocation[1].y > (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                UseLadder(up);
+                pathToLocation.RemoveAt(0);
+            } else if (pathToLocation[1].y < (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                UseLadder(down);
+                pathToLocation.RemoveAt(0);
+            }
+            nextInstruction = pathToLocation[0];
+            newInstruction = true;
+        } else if (pathToLocation.Count > 1) { //Only one more instruction left.
+            pathToLocation.RemoveAt(0);
+            if (pathToLocation[0].y > (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                UseLadder(up);
+            } else if (pathToLocation[0].y < (int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero)) {
+                UseLadder(down);
+            }
+            nextInstruction = pathToLocation[0];
+            newInstruction = true;
+        } else { //We have arrived!
+            goingToLocation = false;
+        }
     }
 
     public virtual void OnMouseDown() {
@@ -284,12 +293,29 @@ public class Sentient : LivingBeing {
         gameObject.layer = Tower.CitizenLayer;
         if (goingToLocation && pathToLocation.Count > 0) {
             newInstruction = true;
-        }
+        } 
     }
 
     public override void OnTriggerEnter2D(Collider2D trigger) {
         if (isDescending && trigger.tag == "BottomTransportCheck") {
-            StopVerticalTransport();
+            if (goingToLocation) {
+                if ((int)Math.Round(trigger.transform.position.y, MidpointRounding.AwayFromZero) == nextInstruction.y) {
+                    StopVerticalTransport();
+                }
+            } else {
+                StopVerticalTransport();
+            }
+        }
+
+        if (trigger.gameObject.tag == "Ladder") {
+            onLadder = true;
+            if (useNextLadder) {
+                onFloor = false;
+                gameObject.layer = Tower.TransportLayer;
+            } else {
+                onFloor = true;
+                gameObject.layer = Tower.CitizenLayer;
+            }
         }
     }
 
@@ -302,27 +328,12 @@ public class Sentient : LivingBeing {
         if (col.gameObject.tag == "Ground" || col.gameObject.tag == "Floor" || col.gameObject.tag == "Ceiling") {
             onFloor = true;
         }
-
-        if (col.gameObject.tag == "Ladder") {
-            onLadder = true;
-            if (useNextLadder) {
-                onFloor = false;
-                gameObject.layer = Tower.TransportLayer;
-            } else {
-                onFloor = true;
-                gameObject.layer = Tower.CitizenLayer;
-            }
-        }
-
-        if (col.gameObject.tag == "EdgeOfMap" || col.gameObject.tag == "LeftBuildingEdge" || col.gameObject.tag == "RightBuildingEdge") {
-            roamDirection *= -1;
-        }
     }
 
-    public override void OnCollisionExit2D(Collision2D col) {
-        if (col.gameObject.tag == "Ladder") {
+    public void OnTriggerExit2D(Collider2D trigger) {
+        if (trigger.gameObject.tag == "Ladder") {
             if (goingToLocation) {
-                if ((int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero) == nextInstruction.y) {
+                if ((int)Math.Round(transform.position.y, MidpointRounding.AwayFromZero) == nextInstruction.y && isAscending) {
                     StopVerticalTransport();
                 }
             } else {
