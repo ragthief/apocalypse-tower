@@ -241,26 +241,29 @@ public class World {
                 //For all nodes on the ground floor.
                 if (plots[i][k].ground) {
                     pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k + 1, i), 1));
-                    Debug.Log("Horizontal Ground connection: (" + k + ", " + i + ") to (" + (k + 1) + ", " + i + ").");
+                    Debug.Log("Horizontal ground connection: (" + k + ", " + i + ") to (" + (k + 1) + ", " + i + ").");
                 } else {
                     //For non-grounded rooms
-                    if (plots[i][k].GetRoom() != null) {
+                    if (plots[i][k].GetRoom() != null || plots[i - 1][k].GetRoom() != null) {
                         //For rooms which have a ladder connecting them the the previous floor.
                         if (plots[i - 1][k].GetRoom().hasLadder) {
-                            if ((int) plots[i-1][k].GetRoom().verticalTransportObject.transform.position.x == k) {
+                            if ((int)plots[i - 1][k].GetRoom().verticalTransportObject.transform.position.x == k) {
                                 pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k, i - 1), 1));
                                 Debug.Log("Ladder connection: (" + k + ", " + i + ") to (" + k + ", " + (i - 1) + ").");
                             }
                         }
                         //For rooms which have not been connected yet.
-                        if (plots[i][k + 1].GetRoom() != null) {
+                        if (plots[i][k + 1].GetRoom() != null || plots[i - 1][k + 1].GetRoom() != null) {
                             pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k + 1, i), 1));
                             Debug.Log("Horizontal connection: (" + k + ", " + i + ") to (" + (k + 1) + ", " + i + ").");
                         }
+                        //For ceiling connections.
+                        if (plots[i][k].GetRoom() == null) {
+                            pathfindingGraph.AddConnection(new Connection(new Vector2(k, i), new Vector2(k + 1, i), 1));
+                            Debug.Log("Ceiling connection: (" + k + ", " + i + ") to (" + (k + 1) + ", " + i + ").");
+                        }  
                     }
                 }
-
-
             }
         }
     }
