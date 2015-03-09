@@ -68,7 +68,7 @@ public class Room : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        badPlacement = (Texture2D)Resources.Load("BadPlacement");
+        badPlacement = (Texture2D)Resources.Load("Sprites/GameControl/BadPlacement");
     }
 
     // Will be called when the user has clicked to confirm they want the room to be placed.
@@ -80,8 +80,8 @@ public class Room : MonoBehaviour {
 		Tower.AddRoom(this);
         floorObject = Instantiate(Resources.Load(transPath + "Floor"), new Vector3(transform.position.x, transform.position.y + floorOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
         ceilingObject = Instantiate(Resources.Load(transPath + "Ceiling"), new Vector3(transform.position.x, transform.position.y + ceilingOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
-        leftBuildingEdge = Instantiate(Resources.Load("Prefabs/LeftBuildingEdge"), new Vector3(transform.position.x + leftBuildingEdgeXOffset, transform.position.y + buildingEdgeYOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
-        rightBuildingEdge = Instantiate(Resources.Load("Prefabs/RightBuildingEdge"), new Vector3(transform.position.x + rightBuildingEdgeXOffset, transform.position.y + buildingEdgeYOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
+        leftBuildingEdge = Instantiate(Resources.Load(transPath + "LeftBuildingEdge"), new Vector3(transform.position.x + leftBuildingEdgeXOffset, transform.position.y + buildingEdgeYOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
+        rightBuildingEdge = Instantiate(Resources.Load(transPath + "RightBuildingEdge"), new Vector3(transform.position.x + rightBuildingEdgeXOffset, transform.position.y + buildingEdgeYOffset, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
     }
 
 	public int Height{

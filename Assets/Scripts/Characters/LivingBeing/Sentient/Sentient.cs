@@ -172,7 +172,7 @@ public class Sentient : LivingBeing {
     }
 
     public virtual void createIndicator() {
-        citizenIndicator = Instantiate(Resources.Load("Prefabs/Indicator"), new Vector3(transform.position.x, transform.position.y + .7f, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
+        citizenIndicator = Instantiate(Resources.Load("Prefabs/DisplayControl/Indicator"), new Vector3(transform.position.x, transform.position.y + .7f, 0), new Quaternion(0, 0, 0, 0)) as GameObject;
         citizenIndicator.transform.parent = this.transform;
         oldIndicator = true;
     }

@@ -104,7 +104,7 @@ public class Tower {
         //Find a residental building to house the spawned citizen in.
         HouseResident(newResident);      
         currentPopulation++;
-		TowerEvent.overPopulation.Update();
+		//TowerEvent.overPopulation.Update();
     }
 
 	public static bool IsOverPopulated

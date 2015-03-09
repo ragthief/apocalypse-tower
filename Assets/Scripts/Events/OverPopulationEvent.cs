@@ -24,10 +24,10 @@ public class OverPopulationEvent : MonoBehaviour {
 	public void Update() {
 		if (!Tower.IsOverPopulated && Tower.getCurrentPopulation() >= Tower.getPopulationCap() * 0.95 && Tower.getCurrentPopulation() != 0) {
 			Tower.IsOverPopulated = true;
-			overPopulationEvent (Tower.IsOverPopulated);
+			//overPopulationEvent (Tower.IsOverPopulated);
 		} else if (Tower.IsOverPopulated && Tower.getCurrentPopulation() < Tower.getPopulationCap() * 0.95) {
 			Tower.IsOverPopulated = false;
-			overPopulationEvent (Tower.IsOverPopulated);
+			//overPopulationEvent (Tower.IsOverPopulated);
 		}
 	}
 }
