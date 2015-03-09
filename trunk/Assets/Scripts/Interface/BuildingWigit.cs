@@ -60,7 +60,7 @@ public class BuildingWigit : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		roomSnaps = (Texture2D)Resources.Load("RoomSnaps");
+		roomSnaps = (Texture2D)Resources.Load("Sprites/GameControl/RoomSnaps");
 	}
 	
 	// Update is called once per frame

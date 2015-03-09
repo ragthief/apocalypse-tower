@@ -10,11 +10,11 @@ public class TowerEvent : MonoBehaviour {
 	//public static eventObjects;
 
 	void Awake() {
-		overPopulation = new OverPopulationEvent();
+		//overPopulation = new OverPopulationEvent();
 	}
 
 	void Start () {
-		overPopulation.AddMethod(OverPopulation);
+		//overPopulation.AddMethod(OverPopulation);
 	}
 
 	// Temporary method added to the event in the start method for testing. Called when event begins and ends.
